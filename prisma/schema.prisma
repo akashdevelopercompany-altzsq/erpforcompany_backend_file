@@ -1,0 +1,1011 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  userId    String
+  date      DateTime
+  status    AttendanceStatus
+  checkIn   DateTime?
+  checkOut  DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+model Department {
+  id            String              @id @default(uuid())
+  name          String              @unique
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  announcements Announcement[]
+  leaves        Leave[]
+  projects      ProjectDepartment[]
+  teams         Team[]
+  users         User[]              @relation("DepartmentUsers")
+}
+
+model Project {
+  id                 String                     @id @default(uuid())
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  deadline           DateTime?
+  description        String?
+  fileUrl            String?
+  projectManagerId   String?
+  seniorManagerId    String?
+  status             ProjectStatus              @default(ACTIVE)
+  storedFileId       String?
+  title              String
+  projectManager     User?                      @relation("ProjectManagerProjects", fields: [projectManagerId], references: [id])
+  seniorManager      User?                      @relation("SeniorManagerProjects", fields: [seniorManagerId], references: [id])
+  storedFile         StoredFile?                @relation(fields: [storedFileId], references: [id])
+  departments        ProjectDepartment[]
+  reports            ProjectReport[]
+  terminationRequest ProjectTerminationRequest?
+  teams              Team[]
+}
+
+model ProjectDepartment {
+  id           String     @id @default(uuid())
+  projectId    String
+  departmentId String
+  assignedAt   DateTime   @default(now())
+  department   Department @relation(fields: [departmentId], references: [id])
+  project      Project    @relation(fields: [projectId], references: [id])
+
+  @@unique([projectId, departmentId])
+}
+
+model Team {
+  id              String        @id @default(uuid())
+  name            String
+  projectId       String
+  departmentId    String
+  createdByUserId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  department      Department    @relation(fields: [departmentId], references: [id])
+  project         Project       @relation(fields: [projectId], references: [id])
+  members         TeamMember[]
+  messages        TeamMessage[]
+}
+
+model TeamMember {
+  id         String   @id @default(uuid())
+  teamId     String
+  employeeId String
+  role       TeamRole @default(MEMBER)
+  createdAt  DateTime @default(now())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  team       Team     @relation(fields: [teamId], references: [id])
+
+  @@unique([teamId, employeeId])
+}
+
+model TeamMessage {
+  id            String   @id @default(uuid())
+  teamId        String
+  senderUserId  String
+  body          String
+  attachmentUrl String?
+  createdAt     DateTime @default(now())
+  sender        User     @relation(fields: [senderUserId], references: [id])
+  team          Team     @relation(fields: [teamId], references: [id])
+}
+
+model User {
+  id                         String                    @id @default(uuid())
+  email                      String                    @unique
+  password                   String
+  role                       Role                      @default(EMPLOYEE)
+  createdAt                  DateTime                  @default(now())
+  departmentId               String?
+  updatedAt                  DateTime                  @updatedAt
+  profileImage               String?
+  createdAnnouncements       Announcement[]
+  attendance                 Attendance[]
+  cabTickets                 CabTicket[]
+  callsReceived              CallSession[]             @relation("CallsReceived")
+  callsMade                  CallSession[]             @relation("CallsMade")
+  participatedConversations  ConversationParticipant[]
+  employee                   Employee?
+  uploadedDocuments          EmployeeDocument[]
+  financeReports             FinanceReport[]
+  sentMessages               Message[]
+  notifications              Notification[]
+  reviewedPerformanceReports PerformanceReport[]
+  projectManagerProjects     Project[]                 @relation("ProjectManagerProjects")
+  seniorManagerProjects      Project[]                 @relation("SeniorManagerProjects")
+  verifiedReportsL1          ProjectReport[]           @relation("ReportVerifierL1")
+  verifiedReportsL2          ProjectReport[]           @relation("ReportVerifierL2")
+  uploadedFiles              StoredFile[]
+  resolvedTickets            SupportTicket[]
+  assignedTasks              Task[]
+  reviewedSubmissions        TaskSubmission[]
+  sentTeamMessages           TeamMessage[]
+  department                 Department?               @relation("DepartmentUsers", fields: [departmentId], references: [id])
+}
+
+model StoredFile {
+  id                 String              @id @default(uuid())
+  filename           String
+  mimeType           String
+  data               Bytes?
+  size               Int
+  createdAt          DateTime            @default(now())
+  uploadedByUserId   String
+  category           FileCategory        @default(OTHER)
+  url                String?
+  documents          EmployeeDocument[]
+  financeReports     FinanceReport[]
+  resources          LearningResource[]
+  performanceReports PerformanceReport[]
+  projects           Project[]
+  uploadedBy         User                @relation(fields: [uploadedByUserId], references: [id])
+  tasks              Task[]
+  submissions        TaskSubmission[]
+}
+
+model Employee {
+  id                      String                   @id @default(uuid())
+  userId                  String                   @unique
+  firstName               String
+  lastName                String
+  phone                   String?
+  address                 String?
+  jobTitle                String?
+  joinDate                DateTime?
+  salary                  Float?
+  managerId               String?
+  gender                  Gender
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  bloodGroup              String?
+  dob                     DateTime?
+  emergencyContact        String?
+  permanentAddress        String?
+  shiftEndTime            String?                  @default("18:00")
+  cabAssignments          CabPassengerAssignment[]
+  efficiencyRecords       EfficiencyRecord[]
+  user                    User                     @relation(fields: [userId], references: [id])
+  documents               EmployeeDocument[]
+  locationLogs            EmployeeLocationLog[]
+  EmployeeSalaryStructure EmployeeSalaryStructure?
+  FoodOrder               FoodOrder[]
+  foodBalances            FoodTokenBalance[]
+  foodTransactions        FoodTransaction[]
+  learningResources       LearningResource[]
+  leaves                  Leave[]
+  leaveBalances           LeaveTokenBalance[]
+  MeetingAttendance       MeetingAttendance[]
+  Payslip                 Payslip[]
+  performanceReports      PerformanceReport[]
+  ProjectReport           ProjectReport[]
+  SalaryRevisionHistory   SalaryRevisionHistory[]
+  sosIncidents            SosIncident[]
+  tickets                 SupportTicket[]
+  tasks                   Task[]                   @relation("EmployeeTasks")
+  dailyReports            TaskDailyReport[]
+  submissions             TaskSubmission[]
+  teamMemberships         TeamMember[]
+}
+
+model LeaveTokenBalance {
+  id         String   @id @default(uuid())
+  employeeId String
+  year       Int
+  type       String
+  total      Float
+  used       Float    @default(0)
+  remaining  Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, year, type])
+}
+
+model Leave {
+  id             String      @id @default(uuid())
+  employeeId     String
+  departmentId   String
+  type           String
+  reason         String?
+  startDate      DateTime
+  endDate        DateTime
+  status         LeaveStatus @default(PENDING)
+  requestedAt    DateTime    @default(now())
+  respondedAt    DateTime?
+  respondedBy    String?
+  isAutoApproved Boolean     @default(false)
+  department     Department  @relation(fields: [departmentId], references: [id])
+  employee       Employee    @relation(fields: [employeeId], references: [id])
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String?
+  body        String?
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  type        String   @default("INFO")
+  payload     Json?
+  referenceId String?
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model EmployeeDocument {
+  id               String       @id @default(uuid())
+  employeeId       String
+  type             DocumentType
+  title            String
+  fileUrl          String?
+  uploadedByUserId String
+  createdAt        DateTime     @default(now())
+  storedFileId     String?
+  employee         Employee     @relation(fields: [employeeId], references: [id])
+  storedFile       StoredFile?  @relation(fields: [storedFileId], references: [id])
+  uploadedBy       User         @relation(fields: [uploadedByUserId], references: [id])
+}
+
+model Task {
+  id               String            @id @default(uuid())
+  employeeId       String
+  assignedByUserId String
+  title            String
+  description      String?
+  status           TaskStatus        @default(PENDING)
+  dueDate          DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  fileUrl          String?
+  storedFileId     String?
+  priority         TaskPriority      @default(MEDIUM)
+  assignedBy       User              @relation(fields: [assignedByUserId], references: [id])
+  employee         Employee          @relation("EmployeeTasks", fields: [employeeId], references: [id])
+  storedFile       StoredFile?       @relation(fields: [storedFileId], references: [id])
+  dailyReports     TaskDailyReport[]
+  submissions      TaskSubmission[]
+}
+
+model TaskDailyReport {
+  id          String   @id @default(uuid())
+  taskId      String
+  employeeId  String
+  progress    Int
+  hoursSpent  Float
+  description String
+  createdAt   DateTime @default(now())
+  submittedAt DateTime @default(now())
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  task        Task     @relation(fields: [taskId], references: [id])
+}
+
+model TaskSubmission {
+  id               String           @id @default(uuid())
+  taskId           String
+  employeeId       String
+  content          String
+  submittedAt      DateTime         @default(now())
+  reviewedByUserId String?
+  reviewComment    String?
+  status           SubmissionStatus @default(PENDING_REVIEW)
+  fileUrl          String?
+  storedFileId     String?
+  employee         Employee         @relation(fields: [employeeId], references: [id])
+  reviewedBy       User?            @relation(fields: [reviewedByUserId], references: [id])
+  storedFile       StoredFile?      @relation(fields: [storedFileId], references: [id])
+  task             Task             @relation(fields: [taskId], references: [id])
+}
+
+model PerformanceReport {
+  id             String           @id @default(uuid())
+  employeeId     String
+  title          String
+  projectName    String
+  periodStart    DateTime
+  periodEnd      DateTime
+  fileUrl        String?
+  rating         Float?
+  createdAt      DateTime         @default(now())
+  feedback       String?
+  reviewerId     String?
+  storedFileId   String?
+  dueDate        DateTime?
+  status         SubmissionStatus @default(PENDING_REVIEW)
+  submissionDate DateTime?
+  employee       Employee         @relation(fields: [employeeId], references: [id])
+  reviewer       User?            @relation(fields: [reviewerId], references: [id])
+  storedFile     StoredFile?      @relation(fields: [storedFileId], references: [id])
+}
+
+model Meeting {
+  id          String              @id @default(uuid())
+  title       String
+  description String?
+  scheduledAt DateTime
+  duration    Int
+  type        String
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  attendees   MeetingAttendance[]
+}
+
+model MeetingAttendance {
+  id              String    @id @default(uuid())
+  meetingId       String
+  employeeId      String
+  attended        Boolean   @default(false)
+  reportSubmitted Boolean   @default(false)
+  joinedAt        DateTime?
+  createdAt       DateTime  @default(now())
+  employee        Employee  @relation(fields: [employeeId], references: [id])
+  meeting         Meeting   @relation(fields: [meetingId], references: [id])
+
+  @@unique([meetingId, employeeId])
+}
+
+model Announcement {
+  id              String      @id @default(uuid())
+  title           String
+  body            String
+  departmentId    String?
+  createdByUserId String
+  createdAt       DateTime    @default(now())
+  mediaType       String?
+  mediaUrl        String?
+  createdBy       User        @relation(fields: [createdByUserId], references: [id])
+  department      Department? @relation(fields: [departmentId], references: [id])
+}
+
+model SupportTicket {
+  id               String       @id @default(uuid())
+  employeeId       String
+  subject          String
+  description      String
+  status           TicketStatus @default(OPEN)
+  resolution       String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  resolvedAt       DateTime?
+  resolvedByUserId String?
+  category         String       @default("OTHER")
+  priority         String       @default("MEDIUM")
+  attachmentUrl    String?
+  employee         Employee     @relation(fields: [employeeId], references: [id])
+  resolvedBy       User?        @relation(fields: [resolvedByUserId], references: [id])
+}
+
+model Conversation {
+  id           String                    @id @default(uuid())
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+  calls        CallSession[]
+  participants ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  id             String       @id @default(uuid())
+  conversationId String
+  userId         String
+  joinedAt       DateTime     @default(now())
+  lastReadAt     DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String               @id @default(uuid())
+  conversationId String
+  senderUserId   String
+  body           String
+  createdAt      DateTime             @default(now())
+  readAt         DateTime?
+  fileType       String?
+  fileUrl        String?
+  storedFileId   String?
+  editedAt       DateTime?
+  isEdited       Boolean              @default(false)
+  conversation   Conversation         @relation(fields: [conversationId], references: [id])
+  sender         User                 @relation(fields: [senderUserId], references: [id])
+  editHistory    MessageEditHistory[]
+}
+
+model MessageEditHistory {
+  id        String   @id @default(uuid())
+  messageId String
+  oldBody   String
+  editedAt  DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id])
+}
+
+model CallSession {
+  id             String        @id @default(uuid())
+  conversationId String?
+  callerUserId   String
+  calleeUserId   String
+  status         CallStatus    @default(RINGING)
+  startedAt      DateTime?
+  endedAt        DateTime?
+  recordingUrl   String?
+  createdAt      DateTime      @default(now())
+  reason         String?
+  duration       Int?          @default(0)
+  callee         User          @relation("CallsReceived", fields: [calleeUserId], references: [id])
+  caller         User          @relation("CallsMade", fields: [callerUserId], references: [id])
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+}
+
+model Vehicle {
+  id                 String        @id @default(uuid())
+  registrationNumber String        @unique
+  capacity           Int
+  status             VehicleStatus @default(ACTIVE)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  trips              CabTrip[]
+  sosIncidents       SosIncident[]
+}
+
+model Driver {
+  id           String        @id @default(uuid())
+  name         String
+  phone        String
+  licenseNo    String
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  trips        CabTrip[]
+  sosIncidents SosIncident[]
+}
+
+model Route {
+  id           String    @id @default(uuid())
+  name         String
+  description  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  pickupPoints String[]
+  trips        CabTrip[]
+}
+
+model CabTicket {
+  id        String       @id @default(uuid())
+  userId    String
+  date      DateTime
+  reason    String
+  status    TicketStatus @default(OPEN)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  user      User         @relation(fields: [userId], references: [id])
+}
+
+model CabTrip {
+  id           String                   @id @default(uuid())
+  date         DateTime
+  shift        ShiftType
+  vehicleId    String
+  driverId     String
+  routeId      String
+  departmentId String?
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+  passengers   CabPassengerAssignment[]
+  driver       Driver                   @relation(fields: [driverId], references: [id])
+  route        Route                    @relation(fields: [routeId], references: [id])
+  vehicle      Vehicle                  @relation(fields: [vehicleId], references: [id])
+  sosIncidents SosIncident[]
+}
+
+model CabPassengerAssignment {
+  id          String   @id @default(uuid())
+  cabTripId   String
+  employeeId  String
+  pickupPoint String
+  dropPoint   String
+  pickupTime  DateTime
+  dropTime    DateTime
+  createdAt   DateTime @default(now())
+  cabTrip     CabTrip  @relation(fields: [cabTripId], references: [id])
+  employee    Employee @relation(fields: [employeeId], references: [id])
+}
+
+model EmployeeLocationLog {
+  id         String   @id @default(uuid())
+  employeeId String
+  latitude   Float
+  longitude  Float
+  capturedAt DateTime @default(now())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+}
+
+model FoodTokenBalance {
+  id          String   @id @default(uuid())
+  employeeId  String
+  year        Int
+  month       Int
+  totalTokens Int
+  usedTokens  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  employee    Employee @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, year, month])
+}
+
+model FoodTransaction {
+  id            String              @id @default(uuid())
+  employeeId    String
+  tokensUsed    Int                 @default(0)
+  amountCharged Float               @default(0)
+  type          FoodTransactionType
+  description   String?
+  createdAt     DateTime            @default(now())
+  employee      Employee            @relation(fields: [employeeId], references: [id])
+}
+
+model FoodItem {
+  id          String          @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  isAvailable Boolean         @default(true)
+  category    String          @default("MEAL")
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  orderItems  FoodOrderItem[]
+}
+
+model FoodOrder {
+  id            String          @id @default(uuid())
+  employeeId    String
+  totalAmount   Float
+  status        FoodOrderStatus @default(PENDING)
+  floor         String?
+  seatNumber    String?
+  paymentStatus String          @default("PENDING")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  employee      Employee        @relation(fields: [employeeId], references: [id])
+  items         FoodOrderItem[]
+}
+
+model FoodOrderItem {
+  id         String    @id @default(uuid())
+  orderId    String
+  foodItemId String
+  quantity   Int
+  price      Float
+  foodItem   FoodItem  @relation(fields: [foodItemId], references: [id])
+  order      FoodOrder @relation(fields: [orderId], references: [id])
+}
+
+model LearningResource {
+  id             String      @id @default(uuid())
+  employeeId     String
+  title          String
+  description    String
+  type           String
+  url            String?
+  storedFileId   String?
+  cost           Float?
+  justification  String?
+  status         String
+  adminComment   String?
+  certificateUrl String?
+  createdAt      DateTime    @default(now())
+  paymentStatus  String      @default("PENDING")
+  paymentUrl     String?
+  tokenId        String?     @unique
+  employee       Employee    @relation(fields: [employeeId], references: [id])
+  storedFile     StoredFile? @relation(fields: [storedFileId], references: [id])
+}
+
+model CalendarEvent {
+  id          String            @id @default(uuid())
+  title       String
+  description String?
+  date        DateTime          @unique
+  type        CalendarEventType @default(HOLIDAY)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model SosIncident {
+  id           String           @id @default(uuid())
+  employeeId   String
+  cabTripId    String?
+  vehicleId    String?
+  driverId     String?
+  status       SosStatus        @default(ACTIVE)
+  source       SosSource        @default(WEB)
+  message      String?
+  initialLat   Float?
+  initialLong  Float?
+  lastLat      Float?
+  lastLong     Float?
+  resolvedAt   DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  cabTrip      CabTrip?         @relation(fields: [cabTripId], references: [id])
+  driver       Driver?          @relation(fields: [driverId], references: [id])
+  employee     Employee         @relation(fields: [employeeId], references: [id])
+  vehicle      Vehicle?         @relation(fields: [vehicleId], references: [id])
+  locationLogs SosLocationLog[]
+}
+
+model SosLocationLog {
+  id            String      @id @default(uuid())
+  sosIncidentId String
+  latitude      Float
+  longitude     Float
+  capturedAt    DateTime    @default(now())
+  sosIncident   SosIncident @relation(fields: [sosIncidentId], references: [id])
+}
+
+model EfficiencyRecord {
+  id          String           @id @default(uuid())
+  employeeId  String
+  period      EfficiencyPeriod
+  startDate   DateTime
+  endDate     DateTime
+  score       Float
+  breakdown   Json
+  generatedAt DateTime         @default(now())
+  employee    Employee         @relation(fields: [employeeId], references: [id])
+}
+
+model ProjectReport {
+  id                 String       @id @default(uuid())
+  projectId          String
+  employeeId         String
+  title              String
+  content            String
+  fileUrl            String?
+  status             ReportStatus @default(PENDING)
+  submittedAt        DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  verifiedByL1UserId String?
+  verifiedByL2UserId String?
+  l1Status           ReportStatus @default(PENDING)
+  l2Status           ReportStatus @default(PENDING)
+  l1Comment          String?
+  l2Comment          String?
+  verifiedByL1Id     String?
+  verifiedByL2Id     String?
+  employee           Employee     @relation(fields: [employeeId], references: [id])
+  project            Project      @relation(fields: [projectId], references: [id])
+  verifierL1         User?        @relation("ReportVerifierL1", fields: [verifiedByL1UserId], references: [id])
+  verifierL2         User?        @relation("ReportVerifierL2", fields: [verifiedByL2UserId], references: [id])
+}
+
+model ProjectTerminationRequest {
+  id                String            @id @default(uuid())
+  projectId         String            @unique
+  reason            String
+  status            TerminationStatus @default(PENDING)
+  requestedAt       DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  pkStatus          TerminationStatus @default(PENDING)
+  smStatus          TerminationStatus @default(PENDING)
+  hrStatus          TerminationStatus @default(PENDING)
+  ceoApproved       Boolean           @default(false)
+  descriptionReport String?
+  discussionReport  String?
+  hrApproved        Boolean           @default(false)
+  isOnline          Boolean?
+  pmApproved        Boolean           @default(false)
+  proofUrl          String?
+  seniorPmApproved  Boolean           @default(false)
+  teamLeadApproved  Boolean           @default(false)
+  project           Project           @relation(fields: [projectId], references: [id])
+}
+
+model FinanceReport {
+  id              String      @id @default(uuid())
+  title           String
+  type            String
+  fileUrl         String?
+  storedFileId    String?
+  periodStart     DateTime
+  periodEnd       DateTime
+  createdByUserId String
+  createdAt       DateTime    @default(now())
+  createdBy       User        @relation(fields: [createdByUserId], references: [id])
+  storedFile      StoredFile? @relation(fields: [storedFileId], references: [id])
+}
+
+model EmployeeSalaryStructure {
+  id               String   @id
+  employeeId       String   @unique
+  basicSalary      Decimal  @db.Decimal(12, 2)
+  hra              Decimal  @db.Decimal(12, 2)
+  specialAllowance Decimal  @db.Decimal(12, 2)
+  performancePay   Decimal  @db.Decimal(12, 2)
+  grossSalary      Decimal  @db.Decimal(12, 2)
+  status           String   @default("ACTIVE")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime
+  Employee         Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model PayrollApproval {
+  id             String       @id
+  payrollCycleId String
+  role           String
+  status         String       @default("PENDING")
+  actionedBy     String?
+  actionedAt     DateTime?
+  comments       String?
+  createdAt      DateTime     @default(now())
+  PayrollCycle   PayrollCycle @relation(fields: [payrollCycleId], references: [id], onDelete: Cascade)
+
+  @@unique([payrollCycleId, role])
+}
+
+model PayrollCycle {
+  id              String            @id
+  month           Int
+  year            Int
+  status          String
+  grossTotal      Decimal           @default(0.00) @db.Decimal(14, 2)
+  deductionsTotal Decimal           @default(0.00) @db.Decimal(14, 2)
+  netTotal        Decimal           @default(0.00) @db.Decimal(14, 2)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime
+  PayrollApproval PayrollApproval[]
+  Payslip         Payslip[]
+
+  @@unique([month, year])
+}
+
+model PayrollSettings {
+  id             String   @id
+  companyName    String   @default("Enterprise Corp")
+  companyLogoUrl String?
+  pfRate         Decimal  @default(12.00) @db.Decimal(5, 2)
+  esiRate        Decimal  @default(0.75) @db.Decimal(5, 2)
+  taxRateDefault Decimal  @default(10.00) @db.Decimal(5, 2)
+  updatedAt      DateTime
+}
+
+model Payslip {
+  id                  String       @id
+  employeeId          String
+  payrollCycleId      String
+  basicSalary         Decimal      @db.Decimal(12, 2)
+  hra                 Decimal      @db.Decimal(12, 2)
+  specialAllowance    Decimal      @db.Decimal(12, 2)
+  performancePay      Decimal      @db.Decimal(12, 2)
+  grossSalary         Decimal      @db.Decimal(12, 2)
+  attendanceDeduction Decimal      @default(0.00) @db.Decimal(12, 2)
+  taxDeduction        Decimal      @default(0.00) @db.Decimal(12, 2)
+  pfDeduction         Decimal      @default(0.00) @db.Decimal(12, 2)
+  esiDeduction        Decimal      @default(0.00) @db.Decimal(12, 2)
+  totalDeductions     Decimal      @default(0.00) @db.Decimal(12, 2)
+  netSalary           Decimal      @db.Decimal(12, 2)
+  status              String       @default("GENERATED")
+  pdfUrl              String?
+  employeeDocumentId  String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime
+  Employee            Employee     @relation(fields: [employeeId], references: [id])
+  PayrollCycle        PayrollCycle @relation(fields: [payrollCycleId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, payrollCycleId])
+}
+
+model SalaryRevisionHistory {
+  id            String   @id
+  employeeId    String
+  oldBasic      Decimal  @db.Decimal(12, 2)
+  newBasic      Decimal  @db.Decimal(12, 2)
+  oldGross      Decimal  @db.Decimal(12, 2)
+  newGross      Decimal  @db.Decimal(12, 2)
+  effectiveDate DateTime
+  approvedBy    String
+  notes         String?
+  createdAt     DateTime @default(now())
+  Employee      Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EMPLOYEE
+  SENIOR_MANAGER
+  PROJECT_MANAGER
+  DEPARTMENT_MANAGER
+  HR
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum DocumentType {
+  PAYSLIP
+  INSURANCE
+  AGREEMENT
+  PF
+  OTHER
+  PERSONAL
+  EDUCATIONAL
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  SUBMITTED
+  COMPLETED
+  REOPENED
+}
+
+enum SubmissionStatus {
+  PENDING_REVIEW
+  APPROVED
+  CHANGES_REQUESTED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
+  ON_LEAVE
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  TERMINATED
+  PENDING_TERMINATION
+}
+
+enum TeamRole {
+  LEAD
+  MEMBER
+}
+
+enum FileCategory {
+  TASK_ATTACHMENT
+  TASK_SUBMISSION
+  DAILY_REPORT
+  PROFILE_PICTURE
+  ANNOUNCEMENT
+  EMPLOYEE_DOCUMENT
+  SUPPORT_TICKET
+  CHAT_MEDIA
+  OTHER
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum CallStatus {
+  RINGING
+  IN_PROGRESS
+  ENDED
+  MISSED
+  REJECTED
+}
+
+enum ShiftType {
+  MORNING
+  EVENING
+  NIGHT
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum FoodTransactionType {
+  TOKEN
+  USE_EXTRA
+}
+
+enum FoodOrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PREPARING
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+enum ResourceType {
+  COURSE
+  WEBINAR
+  CERTIFICATION
+  BOOK
+  OTHER
+}
+
+enum ResourceStatus {
+  ASSIGNED
+  REQUESTED
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum CalendarEventType {
+  HOLIDAY
+  EVENT
+  SHUTDOWN
+  WORK_DAY
+}
+
+enum SosStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+  FALSE_ALARM
+}
+
+enum SosSource {
+  WEB
+  MOBILE
+}
+
+enum EfficiencyPeriod {
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum ReportStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+  VERIFIED_L1
+  VERIFIED_L2
+}
+
+enum TerminationStatus {
+  PENDING
+  APPROVED_L1
+  APPROVED_L2
+  APPROVED_HR
+  REJECTED
+  PENDING_APPROVAL
+  PENDING_CEO
+  APPROVED
+}
