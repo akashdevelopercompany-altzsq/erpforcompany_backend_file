@@ -9,7 +9,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'http://127.0.0.1:5173',
-      'https://j1m06b4s-3000.inc1.devtunnels.ms'
+      'https://j1m06b4s-3000.inc1.devtunnels.ms',
+      'https://artibotserp.onrender.com'
     ],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
