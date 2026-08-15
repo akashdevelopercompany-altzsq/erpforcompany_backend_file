@@ -1,0 +1,55 @@
+Validating user: admin@artibots.com
+Error in validateUser: 
+Invalid `this.prisma.user.findUnique()` invocation in
+E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\users\users.service.ts:11:33
+
+   8 constructor(private prisma: PrismaService) { }
+   9 
+  10 async findOne(email: string): Promise<User | null> {
+→ 11     return this.prisma.user.findUnique(
+The column `User.departmentId` does not exist in the current database.
+PrismaClientKnownRequestError: 
+Invalid `this.prisma.user.findUnique()` invocation in
+E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\users\users.service.ts:11:33
+
+   8 constructor(private prisma: PrismaService) { }
+   9 
+  10 async findOne(email: string): Promise<User | null> {
+→ 11     return this.prisma.user.findUnique(
+The column `User.departmentId` does not exist in the current database.
+    at $n.handleRequestError (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async AuthService.validateUser (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\auth\auth.service.ts:17:26)
+    at async AuthController.login (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\auth\auth.controller.ts:11:22)
+    at async E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: employee@artibots.com
+User found: false
+Validating user: admin@artibots.com
+User found: false
+Validating user: admin@artibots.com
+User found: true
+Password match: true
+Validating user: employee@artibots.com
+User found: true
+Password match: true

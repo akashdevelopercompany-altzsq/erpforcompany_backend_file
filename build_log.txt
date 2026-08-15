@@ -1,0 +1,108 @@
+
+> backend@0.0.1 build
+> nest build
+
+[96mcheck_user.ts[0m:[93m7[0m:[93m18[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'username' does not exist in type 'UserWhereUniqueInput'.
+
+[7m7[0m         where: { username: 'admin' },
+[7m [0m [91m                 ~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m3697[0m:[93m5[0m
+    [7m3697[0m     where: UserWhereUniqueInput
+    [7m    [0m [96m    ~~~~~[0m
+    The expected type comes from property 'where' which is declared here on type '{ select?: UserSelect<DefaultArgs> | null | undefined; include?: UserInclude<DefaultArgs> | null | undefined; where: UserWhereUniqueInput; }'
+[96mprisma/seed.ts[0m:[93m10[0m:[93m18[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'username' does not exist in type 'UserWhereUniqueInput'.
+
+[7m10[0m         where: { username: 'admin' },
+[7m  [0m [91m                 ~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m3956[0m:[93m5[0m
+    [7m3956[0m     where: UserWhereUniqueInput
+    [7m    [0m [96m    ~~~~~[0m
+    The expected type comes from property 'where' which is declared here on type '{ select?: UserSelect<DefaultArgs> | null | undefined; include?: UserInclude<DefaultArgs> | null | undefined; where: UserWhereUniqueInput; create: (Without<...> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput); update: (Without<...> & UserUncheckedUpdateInput) | (Without<...> & UserUpdateInput); }'
+[96mprisma/seed.ts[0m:[93m13[0m:[93m13[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'username' does not exist in type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+
+[7m13[0m             username: 'admin',
+[7m  [0m [91m            ~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m3960[0m:[93m5[0m
+    [7m3960[0m     create: XOR<UserCreateInput, UserUncheckedCreateInput>
+    [7m    [0m [96m    ~~~~~~[0m
+    The expected type comes from property 'create' which is declared here on type '{ select?: UserSelect<DefaultArgs> | null | undefined; include?: UserInclude<DefaultArgs> | null | undefined; where: UserWhereUniqueInput; create: (Without<...> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput); update: (Without<...> & UserUncheckedUpdateInput) | (Without<...> & UserUpdateInput); }'
+[96msrc/attendance/attendance.service.ts[0m:[93m12[0m:[93m46[0m - [91merror[0m[90m TS2339: [0mProperty 'attendance' does not exist on type 'PrismaService'.
+
+[7m12[0m         const attendance = await this.prisma.attendance.findFirst({
+[7m  [0m [91m                                             ~~~~~~~~~~[0m
+[96msrc/attendance/attendance.service.ts[0m:[93m31[0m:[93m44[0m - [91merror[0m[90m TS2339: [0mProperty 'attendance' does not exist on type 'PrismaService'.
+
+[7m31[0m         const existing = await this.prisma.attendance.findFirst({
+[7m  [0m [91m                                           ~~~~~~~~~~[0m
+[96msrc/attendance/attendance.service.ts[0m:[93m44[0m:[93m28[0m - [91merror[0m[90m TS2339: [0mProperty 'attendance' does not exist on type 'PrismaService'.
+
+[7m44[0m         return this.prisma.attendance.create({
+[7m  [0m [91m                           ~~~~~~~~~~[0m
+[96msrc/attendance/attendance.service.ts[0m:[93m57[0m:[93m44[0m - [91merror[0m[90m TS2339: [0mProperty 'attendance' does not exist on type 'PrismaService'.
+
+[7m57[0m         const existing = await this.prisma.attendance.findFirst({
+[7m  [0m [91m                                           ~~~~~~~~~~[0m
+[96msrc/attendance/attendance.service.ts[0m:[93m74[0m:[93m28[0m - [91merror[0m[90m TS2339: [0mProperty 'attendance' does not exist on type 'PrismaService'.
+
+[7m74[0m         return this.prisma.attendance.update({
+[7m  [0m [91m                           ~~~~~~~~~~[0m
+[96msrc/auth/auth.controller.ts[0m:[93m30[0m:[93m33[0m - [91merror[0m[90m TS2339: [0mProperty 'registerAdmin' does not exist on type 'AuthService'.
+
+[7m30[0m         return this.authService.registerAdmin(dto);
+[7m  [0m [91m                                ~~~~~~~~~~~~~[0m
+[96msrc/auth/auth.service.ts[0m:[93m59[0m:[93m87[0m - [91merror[0m[90m TS2339: [0mProperty 'departmentName' does not exist on type 'RegisterSuperAdminDto'.
+
+[7m59[0m         let department = await this.prisma.department.findUnique({ where: { name: dto.departmentName } });
+[7m  [0m [91m                                                                                      ~~~~~~~~~~~~~~[0m
+[96msrc/auth/auth.service.ts[0m:[93m61[0m:[93m82[0m - [91merror[0m[90m TS2339: [0mProperty 'departmentName' does not exist on type 'RegisterSuperAdminDto'.
+
+[7m61[0m             department = await this.prisma.department.create({ data: { name: dto.departmentName } });
+[7m  [0m [91m                                                                                 ~~~~~~~~~~~~~~[0m
+[96msrc/employees/dto/update-employee.dto.ts[0m:[93m1[0m:[93m29[0m - [91merror[0m[90m TS2307: [0mCannot find module '@nestjs/mapped-types' or its corresponding type declarations.
+
+[7m1[0m import { PartialType } from '@nestjs/mapped-types';
+[7m [0m [91m                            ~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/employees/employees.service.ts[0m:[93m99[0m:[93m17[0m - [91merror[0m[90m TS2339: [0mProperty 'email' does not exist on type 'UpdateEmployeeDto'.
+
+[7m99[0m         const { email, password, departmentId, ...employeeData } = updateEmployeeDto;
+[7m  [0m [91m                ~~~~~[0m
+[96msrc/employees/employees.service.ts[0m:[93m99[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'password' does not exist on type 'UpdateEmployeeDto'.
+
+[7m99[0m         const { email, password, departmentId, ...employeeData } = updateEmployeeDto;
+[7m  [0m [91m                       ~~~~~~~~[0m
+[96msrc/leaves/leaves.service.ts[0m:[93m23[0m:[93m17[0m - [91merror[0m[90m TS2322: [0mType 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+
+[7m23[0m                 departmentId: user.departmentId,
+[7m  [0m [91m                ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m14818[0m:[93m5[0m
+    [7m14818[0m     departmentId: string
+    [7m     [0m [96m    ~~~~~~~~~~~~[0m
+    The expected type comes from property 'departmentId' which is declared here on type '(Without<LeaveCreateInput, LeaveUncheckedCreateInput> & LeaveUncheckedCreateInput) | (Without<...> & LeaveCreateInput)'
+[96msrc/leaves/leaves.service.ts[0m:[93m46[0m:[93m30[0m - [91merror[0m[90m TS18047: [0m'user.employee' is possibly 'null'.
+
+[7m46[0m                     body: `${user.employee.firstName} ${user.employee.lastName} requested ${createLeaveDto.type} leave.`,
+[7m  [0m [91m                             ~~~~~~~~~~~~~[0m
+[96msrc/leaves/leaves.service.ts[0m:[93m46[0m:[93m57[0m - [91merror[0m[90m TS18047: [0m'user.employee' is possibly 'null'.
+
+[7m46[0m                     body: `${user.employee.firstName} ${user.employee.lastName} requested ${createLeaveDto.type} leave.`,
+[7m  [0m [91m                                                        ~~~~~~~~~~~~~[0m
+[96msrc/sos/sos.service.ts[0m:[93m26[0m:[93m47[0m - [91merror[0m[90m TS18047: [0m'user.employee' is possibly 'null'.
+
+[7m26[0m                     body: `SOS triggered by ${user.employee.firstName} ${user.employee.lastName} (Phone: ${user.employee.phone ?? 'N/A'})!`,
+[7m  [0m [91m                                              ~~~~~~~~~~~~~[0m
+[96msrc/sos/sos.service.ts[0m:[93m26[0m:[93m74[0m - [91merror[0m[90m TS18047: [0m'user.employee' is possibly 'null'.
+
+[7m26[0m                     body: `SOS triggered by ${user.employee.firstName} ${user.employee.lastName} (Phone: ${user.employee.phone ?? 'N/A'})!`,
+[7m  [0m [91m                                                                         ~~~~~~~~~~~~~[0m
+[96msrc/sos/sos.service.ts[0m:[93m26[0m:[93m108[0m - [91merror[0m[90m TS18047: [0m'user.employee' is possibly 'null'.
+
+[7m26[0m                     body: `SOS triggered by ${user.employee.firstName} ${user.employee.lastName} (Phone: ${user.employee.phone ?? 'N/A'})!`,
+[7m  [0m [91m                                                                                                           ~~~~~~~~~~~~~[0m
+
+Found 20 error(s).
+

@@ -1,0 +1,60 @@
+
+Time: 2025-12-10T20:54:54.790Z
+User: 3e631340-126d-4f07-a221-288eab9520ec
+DTO: {"source":"WEB","message":"Emergency triggered via Web Button","latitude":10.9004541,"longitude":76.9550036}
+Error: 
+Invalid `this.prisma.sosIncident.create()` invocation in
+E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\sos\sos.service.ts:35:60
+
+  32 // const activeTrip = ...
+  33 
+  34 // 3. Create Incident
+→ 35 const incident = await this.prisma.sosIncident.create(
+The table `public.SosIncident` does not exist in the current database.
+Stack: PrismaClientKnownRequestError: 
+Invalid `this.prisma.sosIncident.create()` invocation in
+E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\sos\sos.service.ts:35:60
+
+  32 // const activeTrip = ...
+  33 
+  34 // 3. Create Incident
+→ 35 const incident = await this.prisma.sosIncident.create(
+The table `public.SosIncident` does not exist in the current database.
+    at $n.handleRequestError (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async SosService.create (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\sos\sos.service.ts:35:30)
+    at async E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+----------------------------------------
+
+Time: 2025-12-10T20:54:59.941Z
+User: 3e631340-126d-4f07-a221-288eab9520ec
+DTO: {"source":"WEB","message":"Emergency triggered via Web Button","latitude":10.9004541,"longitude":76.9550036}
+Error: 
+Invalid `this.prisma.sosIncident.create()` invocation in
+E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\sos\sos.service.ts:35:60
+
+  32 // const activeTrip = ...
+  33 
+  34 // 3. Create Incident
+→ 35 const incident = await this.prisma.sosIncident.create(
+The table `public.SosIncident` does not exist in the current database.
+Stack: PrismaClientKnownRequestError: 
+Invalid `this.prisma.sosIncident.create()` invocation in
+E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\sos\sos.service.ts:35:60
+
+  32 // const activeTrip = ...
+  33 
+  34 // 3. Create Incident
+→ 35 const incident = await this.prisma.sosIncident.create(
+The table `public.SosIncident` does not exist in the current database.
+    at $n.handleRequestError (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async SosService.create (E:\Akash\Web_project\Artibots\Employee_management_systems\backend\src\sos\sos.service.ts:35:30)
+    at async E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@nestjs\core\router\router-execution-context.js:46:28
+    at async E:\Akash\Web_project\Artibots\Employee_management_systems\backend\node_modules\@nestjs\core\router\router-proxy.js:9:17
+----------------------------------------

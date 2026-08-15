@@ -1,0 +1,9 @@
+Searching for employee with name containing: akash
+
+Employee: akash ak
+ID: cb5f069a-ccb6-4498-85d8-d20f46655ff6
+User ID: d3b1f7e5-15cd-484c-ad7a-6e8c471306d6
+Role: EMPLOYEE
+Department ID: 0c0d3d49-c3f7-45d6-885c-cbe1f54a0b67
+--- Assigned Projects (via Team) ---
+No team memberships found.
